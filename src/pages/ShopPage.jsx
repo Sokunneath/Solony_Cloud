@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getProducts } from "../services/api";
 import ProductCard from "../components/ProductCard";
+import { getProducts } from "../services/api";
 
 function ShopPage() {
     const [products, setProducts] = useState([]);
@@ -24,16 +24,31 @@ function ShopPage() {
     }, []);
 
     if (loading) {
-        return <p>Loading products...</p>;
+        return (
+            <main className="page-container">
+                <p>Loading products...</p>
+            </main>
+        );
     }
 
     if (error) {
-        return <p>{error}</p>;
+        return (
+            <main className="page-container">
+                <p>{error}</p>
+            </main>
+        );
     }
 
     return (
         <main className="page-container">
-            <h1>Shop Solony</h1>
+            <div className="page-heading">
+                <p>Our Collection</p>
+                <h1>Shop Solony</h1>
+                <p>
+                    Discover stationery for studying, planning,
+                    writing, and creating.
+                </p>
+            </div>
 
             <div className="product-grid">
                 {products.map((product) => (
