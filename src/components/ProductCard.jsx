@@ -1,15 +1,11 @@
 import { Link } from "react-router-dom";
 
 function ProductCard({ product }) {
-    const API_URL = import.meta.env.VITE_API_URL;
-
-    const imagePath = product.image?.[0]?.url;
-
-    const imageUrl = imagePath
-        ? imagePath.startsWith("http")
-            ? imagePath
-            : `${API_URL}${imagePath}`
-        : "";
+    const imageUrl =
+        product.image?.[0]?.formats?.medium?.url ||
+        product.image?.[0]?.formats?.small?.url ||
+        product.image?.[0]?.url ||
+        "";
 
     return (
         <Link
@@ -41,12 +37,6 @@ function ProductCard({ product }) {
 
                 <p className="product-price">
                     ${Number(product.price).toFixed(2)}
-                </p>
-
-                <p className="product-stock">
-                    {product.stock > 0
-                        ? `${product.stock} in stock`
-                        : "Out of stock"}
                 </p>
             </div>
         </Link>
