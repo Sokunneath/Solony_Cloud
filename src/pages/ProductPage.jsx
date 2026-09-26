@@ -1,127 +1,168 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import {
+    useEffect,
+    useState,
+} from "react";
+
+import {
+    Link,
+    useParams,
+} from "react-router-dom";
+
+import {
+    ArrowLeft,
+    ShoppingBag,
+} from "lucide-react";
+
 import { getProduct } from "../services/api";
+
 import { useCart } from "../context/CartContext";
 
-function ProductPage() {
-    const { id } = useParams();
+export default function ProductPage() {
+    const { documentId } = useParams();
+
     const { addToCart } = useCart();
 
-    const [product, setProduct] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+    const [product, setProduct] =
+        useState(null);
 
-    const API_URL = import.meta.env.VITE_API_URL;
+    const [loading, setLoading] =
+        useState(true);
+
+    const [error, setError] =
+        useState("");
+
+    const [added, setAdded] =
+        useState(false);
 
     useEffect(() => {
         async function loadProduct() {
             try {
-                const data = await getProduct(id);
+                setLoading(true);
+
+                const data =
+                    await getProduct(documentId);
+
                 setProduct(data);
-            } catch (err) {
-                console.error(err);
-                setError("Unable to load product.");
+            } catch (error) {
+                console.error(error);
+
+                setError(
+                    "Unable to load this product."
+                );
             } finally {
                 setLoading(false);
             }
         }
 
         loadProduct();
-    }, [id]);
+    }, [documentId]);
 
     if (loading) {
         return (
-            <main className="page-container">
-                <p>Loading product...</p>
+            <main className="product-detail-page">
+                <p>
+                    finding your stationery...
+                </p>
             </main>
         );
     }
 
     if (error || !product) {
         return (
-            <main className="page-container">
-                <h1>Product not found</h1>
-
-                <Link to="/shop" className="primary-button">
-                    Back to Shop
-                </Link>
+            <main className="product-detail-page">
+                <div className="empty-state">
+                    <span>☁</span>
+                    <h2>product unavailable</h2>
+                    <p>{error}</p>
+                </div>
             </main>
         );
     }
 
-    const imagePath =
+    const image =
         product.image?.[0]?.formats?.large?.url ||
         product.image?.[0]?.formats?.medium?.url ||
-        product.image?.[0]?.url;
+        product.image?.[0]?.url ||
+        "";
 
-    const imageUrl = imagePath
-        ? imagePath.startsWith("http")
-            ? imagePath
-            : `${API_URL}${imagePath}`
-        : "";
+    function handleAddToCart() {
+        addToCart(product);
+
+        setAdded(true);
+
+        setTimeout(() => {
+            setAdded(false);
+        }, 1500);
+    }
 
     return (
         <main className="product-detail-page">
-            <div className="product-detail">
+            <Link
+                to="/shop"
+                className="back-link"
+            >
+                <ArrowLeft size={16} />
+                back to shop
+            </Link>
 
-                {/* PRODUCT IMAGE */}
+            <section className="product-detail">
                 <div className="product-detail-image">
-                    {imageUrl ? (
+                    {image ? (
                         <img
-                            src={imageUrl}
+                            src={image}
                             alt={product.name}
                         />
                     ) : (
-                        <div className="product-no-image">
-                            No image
-                        </div>
+                        <span>
+                            no image
+                        </span>
                     )}
                 </div>
 
-                {/* PRODUCT INFO */}
                 <div className="product-detail-info">
-
-                    <p className="product-category">
-                        {product.category || "Stationery"}
-                    </p>
+                    <span className="product-category">
+                        {product.category}
+                    </span>
 
                     <h1>{product.name}</h1>
 
-                    <p className="product-detail-price">
-                        ${Number(product.price).toFixed(2)}
-                    </p>
-
-                    <p className="product-description">
+                    <p className="product-detail-description">
                         {product.description}
                     </p>
 
+                    <div className="product-detail-price">
+                        $
+                        {Number(
+                            product.price
+                        ).toFixed(2)}
+                    </div>
+
                     <p className="product-stock">
                         {product.stock > 0
-                            ? `${product.stock} items available`
-                            : "Out of stock"}
+                            ? `${product.stock} left in stock`
+                            : "out of stock"}
                     </p>
 
                     <button
-                        className="add-cart-button"
-                        disabled={product.stock <= 0}
-                        onClick={() => addToCart(product)}
+                        className={`add-cart-button ${added ? "added" : ""
+                            }`}
+                        onClick={handleAddToCart}
+                        disabled={
+                            product.stock <= 0
+                        }
                     >
-                        {product.stock > 0
-                            ? "Add to Cart"
-                            : "Out of Stock"}
+                        <ShoppingBag
+                            size={17}
+                        />
+
+                        {product.stock <= 0
+                            ? "out of stock"
+                            : added
+                                ? "added ♡"
+                                : "add to cart"}
                     </button>
-
-                    <Link
-                        to="/shop"
-                        className="back-shop-link"
-                    >
-                        ← Back to Shop
-                    </Link>
-
                 </div>
-            </div>
+            </section>
         </main>
     );
 }
-
-export default ProductPage;

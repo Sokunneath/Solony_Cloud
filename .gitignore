@@ -1,5 +1,6 @@
 .env
-
+.env.*
+!.env.example
 
 # Logs
 logs
@@ -20,6 +21,7 @@ dist-ssr
 !.vscode/extensions.json
 .idea
 .DS_Store
+.vercel
 *.suo
 *.ntvs*
 *.njsproj

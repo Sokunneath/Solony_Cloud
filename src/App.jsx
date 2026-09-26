@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -6,12 +6,12 @@ import Footer from "./components/Footer";
 import HomePage from "./pages/HomePage";
 import ShopPage from "./pages/ShopPage";
 import ProductPage from "./pages/ProductPage";
-import AboutPage from "./pages/AboutPage";
 import CartPage from "./pages/CartPage";
+import AboutPage from "./pages/AboutPage";
 
-function App() {
+export default function App() {
   return (
-    <BrowserRouter>
+    <div className="app">
       <Navbar />
 
       <Routes>
@@ -20,18 +20,16 @@ function App() {
         <Route path="/shop" element={<ShopPage />} />
 
         <Route
-          path="/products/:id"
+          path="/products/:documentId"
           element={<ProductPage />}
         />
 
-        <Route path="/about" element={<AboutPage />} />
-
         <Route path="/cart" element={<CartPage />} />
+
+        <Route path="/about" element={<AboutPage />} />
       </Routes>
 
       <Footer />
-    </BrowserRouter>
+    </div>
   );
 }
-
-export default App;

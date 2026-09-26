@@ -1,20 +1,43 @@
-import { useEffect, useState } from "react";
+import {
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
+
+import { useSearchParams } from "react-router-dom";
+
 import ProductCard from "../components/ProductCard";
 import { getProducts } from "../services/api";
 
-function ShopPage() {
+export default function ShopPage() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    const [search, setSearch] = useState("");
+
+    const [searchParams] = useSearchParams();
+
+    const category =
+        searchParams.get("category");
+
     useEffect(() => {
         async function loadProducts() {
             try {
-                const data = await getProducts();
+                setLoading(true);
+
+                const data =
+                    await getProducts();
+
                 setProducts(data);
-            } catch (err) {
-                console.error(err);
-                setError("Unable to load products.");
+
+                setError("");
+            } catch (error) {
+                console.error(error);
+
+                setError(
+                    "We couldn't load the stationery right now."
+                );
             } finally {
                 setLoading(false);
             }
@@ -23,43 +46,137 @@ function ShopPage() {
         loadProducts();
     }, []);
 
-    if (loading) {
-        return (
-            <main className="page-container">
-                <p>Loading products...</p>
-            </main>
-        );
-    }
+    const filteredProducts =
+        useMemo(() => {
+            return products.filter(
+                (product) => {
+                    const matchesSearch =
+                        product.name
+                            ?.toLowerCase()
+                            .includes(
+                                search.toLowerCase()
+                            );
 
-    if (error) {
-        return (
-            <main className="page-container">
-                <p>{error}</p>
-            </main>
-        );
-    }
+                    const matchesCategory =
+                        !category ||
+                        product.category === category;
+
+                    return (
+                        matchesSearch &&
+                        matchesCategory
+                    );
+                }
+            );
+        }, [
+            products,
+            search,
+            category,
+        ]);
 
     return (
-        <main className="page-container">
-            <div className="page-heading">
-                <p>Our Collection</p>
-                <h1>Shop Solony</h1>
-                <p>
-                    Discover stationery for studying, planning,
-                    writing, and creating.
-                </p>
-            </div>
+        <main className="shop-page">
+            <section className="shop-heading">
+                <span>
+                    SOLONY COLLECTION
+                </span>
 
-            <div className="product-grid">
-                {products.map((product) => (
-                    <ProductCard
-                        key={product.documentId || product.id}
-                        product={product}
-                    />
-                ))}
-            </div>
+                <h1>
+                    find something
+                    <em> lovely.</em>
+                </h1>
+
+                <p>
+                    Little stationery pieces for
+                    your everyday ideas.
+                </p>
+            </section>
+
+            <section className="shop-tools">
+                <input
+                    type="search"
+                    placeholder="search stationery..."
+                    value={search}
+                    onChange={(event) =>
+                        setSearch(
+                            event.target.value
+                        )
+                    }
+                />
+
+                {category && (
+                    <span className="active-category">
+                        {category}
+                    </span>
+                )}
+            </section>
+
+            {loading && (
+                <section className="product-grid">
+                    {[1, 2, 3, 4].map(
+                        (item) => (
+                            <div
+                                className="skeleton-card"
+                                key={item}
+                            >
+                                <div className="skeleton-image" />
+
+                                <div className="skeleton-body">
+                                    <div className="skeleton-line short" />
+                                    <div className="skeleton-line" />
+                                    <div className="skeleton-line medium" />
+                                </div>
+                            </div>
+                        )
+                    )}
+                </section>
+            )}
+
+            {error && (
+                <div className="empty-state">
+                    <span>☁</span>
+
+                    <h2>
+                        something went wrong
+                    </h2>
+
+                    <p>{error}</p>
+                </div>
+            )}
+
+            {!loading &&
+                !error &&
+                filteredProducts.length ===
+                0 && (
+                    <div className="empty-state">
+                        <span>✿</span>
+
+                        <h2>
+                            nothing here yet
+                        </h2>
+
+                        <p>
+                            Try another search.
+                        </p>
+                    </div>
+                )}
+
+            {!loading &&
+                !error &&
+                filteredProducts.length >
+                0 && (
+                    <section className="product-grid">
+                        {filteredProducts.map(
+                            (product) => (
+                                <ProductCard
+                                    key={
+                                        product.documentId
+                                    }
+                                    product={product}
+                                />
+                            )
+                        )}
+                    </section>
+                )}
         </main>
     );
 }
-
-export default ShopPage;
