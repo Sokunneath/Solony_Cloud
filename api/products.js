@@ -19,12 +19,15 @@ export default async function handler(
         );
 
         if (!response.ok) {
-            return res
-                .status(response.status)
-                .json({
-                    error:
-                        "Unable to retrieve products",
-                });
+            const errorText = await response.text();
+
+            console.error("Strapi error:", response.status, errorText);
+
+            return res.status(response.status).json({
+                error: "Unable to retrieve products",
+                status: response.status,
+                details: errorText,
+            });
         }
 
         const result =
