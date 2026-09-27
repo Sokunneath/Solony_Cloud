@@ -1,32 +1,41 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ShoppingBag } from "lucide-react";
+
+import {
+    ArrowLeft,
+    ShoppingBag,
+} from "lucide-react";
 
 import { useCart } from "../context/CartContext";
 
 export default function CheckoutPage() {
-    const { cart } = useCart();
+    const {
+        cart,
+        cartTotal,
+        clearCart,
+    } = useCart();
 
-    const [form, setForm] = useState({
-        fullName: "",
-        phone: "",
-        email: "",
-        address: "",
-        city: "",
-        note: "",
-        paymentMethod: "cash",
-    });
+    const [form, setForm] =
+        useState({
+            fullName: "",
+            phone: "",
+            email: "",
+            address: "",
+            city: "",
+            note: "",
 
-    const [submitting, setSubmitting] = useState(false);
+            paymentMethod:
+                "cash_on_delivery",
+        });
 
-    const total = cart.reduce(
-        (sum, item) =>
-            sum + Number(item.price) * item.quantity,
-        0
-    );
+    const [submitting, setSubmitting] =
+        useState(false);
 
     function handleChange(event) {
-        const { name, value } = event.target;
+        const {
+            name,
+            value,
+        } = event.target;
 
         setForm((current) => ({
             ...current,
@@ -37,55 +46,121 @@ export default function CheckoutPage() {
     async function handleSubmit(event) {
         event.preventDefault();
 
+        if (cart.length === 0) {
+            alert(
+                "Your cart is empty."
+            );
+
+            return;
+        }
+
+        setSubmitting(true);
+
         try {
             const orderData = {
-                customer_name: form.fullName,
-                email: form.email,
-                phone: form.phone,
-                shipping_address: form.address,
-                city: form.city,
-                note: form.note,
+                customer_name:
+                    form.fullName,
 
-                items: cartItems.map((item) => ({
-                    documentId: item.documentId,
-                    name: item.name,
-                    quantity: item.quantity,
-                    price: item.price,
-                })),
+                email:
+                    form.email,
 
-                total: cartTotal,
+                phone:
+                    form.phone,
 
-                payment_method: form.paymentMethod,
+                shipping_address:
+                    form.address,
+
+                city:
+                    form.city,
+
+                note:
+                    form.note || "",
+
+                items:
+                    cart.map((item) => ({
+                        documentId:
+                            item.documentId,
+
+                        name:
+                            item.name,
+
+                        quantity:
+                            item.quantity,
+
+                        price:
+                            Number(item.price),
+                    })),
+
+                total:
+                    Number(cartTotal),
+
+                payment_method:
+                    form.paymentMethod,
             };
 
-            const response = await fetch("/api/orders", {
-                method: "POST",
+            console.log(
+                "Sending order:",
+                orderData
+            );
 
-                headers: {
-                    "Content-Type": "application/json",
-                },
+            const response =
+                await fetch(
+                    "/api/orders",
+                    {
+                        method: "POST",
 
-                body: JSON.stringify(orderData),
-            });
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+                        },
 
-            const result = await response.json();
+                        body:
+                            JSON.stringify(
+                                orderData
+                            ),
+                    }
+                );
+
+            const result =
+                await response.json();
+
+            console.log(
+                "Order response:",
+                result
+            );
 
             if (!response.ok) {
-                console.error("Order error:", result);
+                console.error(
+                    "Order error:",
+                    result
+                );
 
-                alert("Unable to place your order.");
+                alert(
+                    result.error ||
+                    "Unable to place your order."
+                );
 
                 return;
             }
 
-            alert("Order placed successfully!");
+            alert(
+                "Order placed successfully!"
+            );
 
             clearCart();
 
         } catch (error) {
-            console.error("Checkout error:", error);
+            console.error(
+                "Checkout error:",
+                error
+            );
 
-            alert("Something went wrong while placing your order.");
+            alert(
+                `Something went wrong: ${error.message}`
+            );
+
+        } finally {
+            setSubmitting(false);
         }
     }
 
@@ -95,13 +170,19 @@ export default function CheckoutPage() {
                 <div className="empty-state">
                     <span>♡</span>
 
-                    <h1>Your cart is empty</h1>
+                    <h1>
+                        Your cart is empty
+                    </h1>
 
                     <p>
-                        Add something lovely before checking out.
+                        Add something lovely
+                        before checking out.
                     </p>
 
-                    <Link to="/shop" className="final-button">
+                    <Link
+                        to="/shop"
+                        className="final-button"
+                    >
                         shop stationery
                     </Link>
                 </div>
@@ -111,13 +192,20 @@ export default function CheckoutPage() {
 
     return (
         <main className="checkout-page">
-            <Link to="/cart" className="back-link">
+
+            <Link
+                to="/cart"
+                className="back-link"
+            >
                 <ArrowLeft size={16} />
+
                 back to cart
             </Link>
 
             <div className="checkout-heading">
-                <span>ALMOST YOURS ♡</span>
+                <span>
+                    ALMOST YOURS ♡
+                </span>
 
                 <h1>
                     checkout
@@ -125,29 +213,45 @@ export default function CheckoutPage() {
                 </h1>
 
                 <p>
-                    Tell us where your little Solony package should go.
+                    Tell us where your
+                    little Solony package
+                    should go.
                 </p>
             </div>
 
             <div className="checkout-layout">
-                {/* CUSTOMER FORM */}
+
+                {/* =========================
+            CUSTOMER FORM
+        ========================== */}
 
                 <form
                     className="checkout-form"
                     onSubmit={handleSubmit}
                 >
+
+                    {/* CONTACT DETAILS */}
+
                     <div className="checkout-section-heading">
-                        <span>01</span>
+                        <span>
+                            01
+                        </span>
 
                         <div>
-                            <h2>contact details</h2>
+                            <h2>
+                                contact details
+                            </h2>
+
                             <p>
-                                We'll use these details for your order.
+                                We'll use these
+                                details for your
+                                order.
                             </p>
                         </div>
                     </div>
 
                     <div className="checkout-fields">
+
                         <div className="form-field full">
                             <label htmlFor="fullName">
                                 Full name
@@ -195,22 +299,32 @@ export default function CheckoutPage() {
                                 required
                             />
                         </div>
+
                     </div>
 
                     <div className="checkout-divider" />
 
+                    {/* DELIVERY DETAILS */}
+
                     <div className="checkout-section-heading">
-                        <span>02</span>
+                        <span>
+                            02
+                        </span>
 
                         <div>
-                            <h2>delivery details</h2>
+                            <h2>
+                                delivery details
+                            </h2>
+
                             <p>
-                                Where should we send your order?
+                                Where should we
+                                send your order?
                             </p>
                         </div>
                     </div>
 
                     <div className="checkout-fields">
+
                         <div className="form-field full">
                             <label htmlFor="address">
                                 Delivery address
@@ -245,7 +359,10 @@ export default function CheckoutPage() {
                         <div className="form-field full">
                             <label htmlFor="note">
                                 Delivery note
-                                <small> optional</small>
+                                <small>
+                                    {" "}
+                                    optional
+                                </small>
                             </label>
 
                             <textarea
@@ -256,26 +373,38 @@ export default function CheckoutPage() {
                                 onChange={handleChange}
                             />
                         </div>
+
                     </div>
 
                     <div className="checkout-divider" />
 
+                    {/* PAYMENT */}
+
                     <div className="checkout-section-heading">
-                        <span>03</span>
+                        <span>
+                            03
+                        </span>
 
                         <div>
-                            <h2>payment</h2>
+                            <h2>
+                                payment
+                            </h2>
 
                             <p>
-                                Choose how you would like to pay.
+                                Choose how you
+                                would like to pay.
                             </p>
                         </div>
                     </div>
 
                     <div className="payment-options">
+
+                        {/* CASH ON DELIVERY */}
+
                         <label
                             className={
-                                form.paymentMethod === "cash"
+                                form.paymentMethod ===
+                                    "cash_on_delivery"
                                     ? "payment-option active"
                                     : "payment-option"
                             }
@@ -283,23 +412,32 @@ export default function CheckoutPage() {
                             <input
                                 type="radio"
                                 name="paymentMethod"
-                                value="cash"
-                                checked={form.paymentMethod === "cash"}
+                                value="cash_on_delivery"
+                                checked={
+                                    form.paymentMethod ===
+                                    "cash_on_delivery"
+                                }
                                 onChange={handleChange}
                             />
 
                             <div>
-                                <strong>Cash on delivery</strong>
+                                <strong>
+                                    Cash on delivery
+                                </strong>
 
                                 <span>
-                                    Pay when your order arrives.
+                                    Pay when your
+                                    order arrives.
                                 </span>
                             </div>
                         </label>
 
+                        {/* BANK TRANSFER */}
+
                         <label
                             className={
-                                form.paymentMethod === "bank"
+                                form.paymentMethod ===
+                                    "bank_transfer"
                                     ? "payment-option active"
                                     : "payment-option"
                             }
@@ -307,19 +445,29 @@ export default function CheckoutPage() {
                             <input
                                 type="radio"
                                 name="paymentMethod"
-                                value="bank"
-                                checked={form.paymentMethod === "bank"}
+                                value="bank_transfer"
+                                checked={
+                                    form.paymentMethod ===
+                                    "bank_transfer"
+                                }
                                 onChange={handleChange}
                             />
 
                             <div>
-                                <strong>Bank transfer</strong>
+                                <strong>
+                                    Bank transfer
+                                </strong>
 
                                 <span>
-                                    Payment instructions can be provided after order confirmation.
+                                    Payment
+                                    instructions can
+                                    be provided after
+                                    order
+                                    confirmation.
                                 </span>
                             </div>
                         </label>
+
                     </div>
 
                     <button
@@ -333,22 +481,32 @@ export default function CheckoutPage() {
                             ? "placing order..."
                             : "place order"}
                     </button>
+
                 </form>
 
-                {/* ORDER SUMMARY */}
+                {/* =========================
+            ORDER SUMMARY
+        ========================== */}
 
                 <aside className="checkout-summary">
+
                     <span className="summary-label">
                         YOUR ORDER
                     </span>
 
-                    <h2>little favorites ♡</h2>
+                    <h2>
+                        little favorites ♡
+                    </h2>
 
                     <div className="checkout-products">
+
                         {cart.map((item) => {
                             const image =
-                                item.image?.[0]?.formats?.small?.url ||
-                                item.image?.[0]?.url ||
+                                item.image?.[0]
+                                    ?.formats?.small
+                                    ?.url ||
+                                item.image?.[0]
+                                    ?.url ||
                                 "";
 
                             return (
@@ -356,7 +514,9 @@ export default function CheckoutPage() {
                                     className="checkout-product"
                                     key={item.documentId}
                                 >
+
                                     <div className="checkout-product-image">
+
                                         {image && (
                                             <img
                                                 src={image}
@@ -367,6 +527,7 @@ export default function CheckoutPage() {
                                         <span>
                                             {item.quantity}
                                         </span>
+
                                     </div>
 
                                     <div>
@@ -377,28 +538,41 @@ export default function CheckoutPage() {
                                         <p>
                                             $
                                             {(
-                                                Number(item.price) *
+                                                Number(
+                                                    item.price
+                                                ) *
                                                 item.quantity
                                             ).toFixed(2)}
                                         </p>
                                     </div>
+
                                 </div>
                             );
                         })}
+
                     </div>
 
                     <div className="summary-total">
-                        <span>Total</span>
+
+                        <span>
+                            Total
+                        </span>
 
                         <strong>
-                            ${total.toFixed(2)}
+                            $
+                            {cartTotal.toFixed(2)}
                         </strong>
+
                     </div>
 
                     <p className="checkout-note">
-                        Shipping fees can be confirmed before delivery.
+                        Shipping fees can be
+                        confirmed before
+                        delivery.
                     </p>
+
                 </aside>
+
             </div>
         </main>
     );

@@ -26,17 +26,21 @@ export function CartProvider({ children }) {
 
     function addToCart(product) {
         setCart((currentCart) => {
-            const existing = currentCart.find(
-                (item) =>
-                    item.documentId === product.documentId
-            );
+            const existing =
+                currentCart.find(
+                    (item) =>
+                        item.documentId ===
+                        product.documentId
+                );
 
             if (existing) {
                 return currentCart.map((item) =>
-                    item.documentId === product.documentId
+                    item.documentId ===
+                        product.documentId
                         ? {
                             ...item,
-                            quantity: item.quantity + 1,
+                            quantity:
+                                item.quantity + 1,
                         }
                         : item
                 );
@@ -58,7 +62,8 @@ export function CartProvider({ children }) {
                 item.documentId === documentId
                     ? {
                         ...item,
-                        quantity: item.quantity + 1,
+                        quantity:
+                            item.quantity + 1,
                     }
                     : item
             )
@@ -72,11 +77,15 @@ export function CartProvider({ children }) {
                     item.documentId === documentId
                         ? {
                             ...item,
-                            quantity: item.quantity - 1,
+                            quantity:
+                                item.quantity - 1,
                         }
                         : item
                 )
-                .filter((item) => item.quantity > 0)
+                .filter(
+                    (item) =>
+                        item.quantity > 0
+                )
         );
     }
 
@@ -93,10 +102,28 @@ export function CartProvider({ children }) {
         setCart([]);
     }
 
+    const cartCount =
+        cart.reduce(
+            (sum, item) =>
+                sum + item.quantity,
+            0
+        );
+
+    const cartTotal =
+        cart.reduce(
+            (sum, item) =>
+                sum +
+                Number(item.price) *
+                item.quantity,
+            0
+        );
+
     return (
         <CartContext.Provider
             value={{
                 cart,
+                cartCount,
+                cartTotal,
                 addToCart,
                 increaseQuantity,
                 decreaseQuantity,
