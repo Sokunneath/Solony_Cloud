@@ -142,100 +142,102 @@ export default function HomePage() {
                 <div className="hero-doodle hero-doodle-two">✦</div>
                 <div className="hero-doodle hero-doodle-three">♡</div>
 
-                {/* hero text */}
-                <div className="home-hero-content">
-                    <span className="hero-label">
-                        SOLONY STATIONERY
-                    </span>
-
-                    <h1>
-                        little things
-                        <span>for brighter ideas.</span>
-                    </h1>
-
-                    <p>
-                        Soft stationery for quiet study days,
-                        creative moments and all the little plans
-                        in between.
-                    </p>
-
-                    <Link
-                        to="/shop"
-                        className="hero-button"
-                    >
-                        explore solony
-                        <ArrowRight size={17} />
-                    </Link>
-                </div>
-
-                {/* =========================
-            FEATURED PRODUCT FRAME
-        ========================== */}
-
-                {featuredProduct && (
-                    <div className="featured-floating-card">
-                        <span className="featured-label">
-                            featured pick ♡
+                {/* NEW HERO LAYOUT */}
+                <div className="home-hero-inner">
+                    {/* LEFT SIDE */}
+                    <div className="home-hero-content">
+                        <span className="hero-label">
+                            SOLONY STATIONERY
                         </span>
 
+                        <h1>
+                            little things
+                            <span>for brighter ideas.</span>
+                        </h1>
+
+                        <p>
+                            Soft stationery for quiet study days,
+                            creative moments and all the little plans
+                            in between.
+                        </p>
+
                         <Link
-                            to={`/products/${featuredProduct.documentId}`}
-                            className="featured-product"
+                            to="/shop"
+                            className="hero-button"
                         >
-                            <div className="featured-image">
-                                {featuredImage ? (
-                                    <img
-                                        src={featuredImage}
-                                        alt={featuredProduct.name}
-                                    />
-                                ) : (
-                                    <div className="featured-no-image">
-                                        no image
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="featured-info">
-                                <div>
-                                    <h3>
-                                        {featuredProduct.name}
-                                    </h3>
-
-                                    <p>
-                                        $
-                                        {Number(
-                                            featuredProduct.price
-                                        ).toFixed(2)}
-                                    </p>
-                                </div>
-
-                                <span className="featured-arrow">
-                                    →
-                                </span>
-                            </div>
+                            explore solony
+                            <ArrowRight size={17} />
                         </Link>
-
-                        <div className="featured-dots">
-                            {featuredProducts.map(
-                                (product, index) => (
-                                    <button
-                                        type="button"
-                                        key={product.documentId}
-                                        className={
-                                            index === featuredIndex
-                                                ? "featured-dot active"
-                                                : "featured-dot"
-                                        }
-                                        onClick={() =>
-                                            setFeaturedIndex(index)
-                                        }
-                                        aria-label={`Show ${product.name}`}
-                                    />
-                                )
-                            )}
-                        </div>
                     </div>
-                )}
+
+                    {/* RIGHT SIDE FEATURED PRODUCT */}
+                    <div className="featured-product-side">
+                        {featuredProduct && (
+                            <div className="featured-floating-card">
+                                <span className="featured-label">
+                                    featured pick ♡
+                                </span>
+
+                                <Link
+                                    to={`/products/${featuredProduct.documentId}`}
+                                    className="featured-product"
+                                >
+                                    <div className="featured-image">
+                                        {featuredImage ? (
+                                            <img
+                                                src={featuredImage}
+                                                alt={featuredProduct.name}
+                                            />
+                                        ) : (
+                                            <div className="featured-no-image">
+                                                no image
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="featured-info">
+                                        <div>
+                                            <h3>
+                                                {featuredProduct.name}
+                                            </h3>
+
+                                            <p>
+                                                $
+                                                {Number(
+                                                    featuredProduct.price
+                                                ).toFixed(2)}
+                                            </p>
+                                        </div>
+
+                                        <span className="featured-arrow">
+                                            →
+                                        </span>
+                                    </div>
+                                </Link>
+
+                                <div className="featured-dots">
+                                    {featuredProducts.map(
+                                        (product, index) => (
+                                            <button
+                                                type="button"
+                                                key={product.documentId}
+                                                className={
+                                                    index === featuredIndex
+                                                        ? "featured-dot active"
+                                                        : "featured-dot"
+                                                }
+                                                onClick={() =>
+                                                    setFeaturedIndex(index)
+                                                }
+                                                aria-label={`Show ${product.name}`}
+                                            />
+                                        )
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
 
                 <div className="scroll-indicator">
                     <span />
@@ -418,7 +420,6 @@ export default function HomePage() {
                         className="simple-link"
                     >
                         our little story
-
                         <ArrowRight size={16} />
                     </Link>
                 </div>
@@ -449,7 +450,6 @@ export default function HomePage() {
                     className="final-button"
                 >
                     find something lovely
-
                     <ArrowRight size={17} />
                 </Link>
             </section>

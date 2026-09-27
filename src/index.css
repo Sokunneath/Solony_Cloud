@@ -336,7 +336,6 @@ h3 {
   min-height: 710px;
 
   display: flex;
-
   align-items: center;
 
   padding: 90px 8%;
@@ -344,13 +343,14 @@ h3 {
   overflow: hidden;
 }
 
+/* background image */
+
 .home-hero-background {
   position: absolute;
 
   inset: 0;
 
   width: 100%;
-
   height: 100%;
 
   object-fit: cover;
@@ -359,8 +359,11 @@ h3 {
     heroZoom 18s ease-in-out infinite alternate;
 }
 
+/* dark overlay */
+
 .home-hero-overlay {
   position: absolute;
+
   inset: 0;
 
   background:
@@ -371,8 +374,38 @@ h3 {
       rgba(52, 64, 45, 0.12) 82%);
 }
 
+/* ==========================================
+   HERO INNER LAYOUT
+   text left / featured product right
+========================================== */
+
+.home-hero-inner {
+  position: relative;
+
+  z-index: 5;
+
+  width: 100%;
+  max-width: 1250px;
+
+  margin: 0 auto;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.2fr) minmax(290px, 0.8fr);
+
+  align-items: center;
+
+  gap: 70px;
+}
+
+/* ==========================================
+   LEFT HERO CONTENT
+========================================== */
+
 .home-hero-content {
   position: relative;
+
   z-index: 5;
 
   max-width: 670px;
@@ -390,6 +423,7 @@ h3 {
   font-family: "Quicksand", sans-serif;
 
   font-size: 10px;
+
   font-weight: 700;
 
   letter-spacing: 4px;
@@ -401,29 +435,14 @@ h3 {
 .home-hero h1 {
   margin: 0;
 
-  color: #faf8ee;
-
-  font-size:
-    clamp(57px,
-      7vw,
-      94px);
-
-  font-weight: 500;
-
-  letter-spacing:
-    -3px;
-
-  line-height: 0.98;
-}
-
-.home-hero h1 {
-  margin: 0;
-
   max-width: 720px;
 
   color: #fffdf5;
 
-  font-size: clamp(58px, 7vw, 92px);
+  font-size:
+    clamp(58px,
+      7vw,
+      92px);
 
   font-weight: 500;
 
@@ -446,7 +465,11 @@ h3 {
 
   margin-top: 28px;
 
-  color: rgba(255, 253, 246, 0.9);
+  color:
+    rgba(255,
+      253,
+      246,
+      0.9);
 
   font-size: 17px;
 
@@ -456,27 +479,25 @@ h3 {
     0 2px 10px rgba(20, 30, 18, 0.22);
 }
 
+/* ==========================================
+   HERO BUTTON
+========================================== */
+
 .hero-button,
 .final-button {
-  display:
-    inline-flex;
+  display: inline-flex;
 
-  align-items:
-    center;
+  align-items: center;
 
-  justify-content:
-    center;
+  justify-content: center;
 
   gap: 12px;
 
-  padding:
-    13px 22px;
+  padding: 13px 22px;
 
-  border-radius:
-    50px;
+  border-radius: 50px;
 
-  text-decoration:
-    none;
+  text-decoration: none;
 
   font-family:
     "Quicksand",
@@ -495,10 +516,6 @@ h3 {
 .hero-button {
   margin-top: 31px;
 
-  display: inline-flex;
-  align-items: center;
-  gap: 13px;
-
   padding: 14px 24px;
 
   border-radius: 999px;
@@ -507,20 +524,8 @@ h3 {
 
   color: #45533f;
 
-  text-decoration: none;
-
-  font-family: "Quicksand", sans-serif;
-
-  font-size: 13px;
-  font-weight: 700;
-
   box-shadow:
     0 10px 30px rgba(25, 34, 22, 0.12);
-
-  transition:
-    transform 0.3s ease,
-    background 0.3s ease,
-    box-shadow 0.3s ease;
 }
 
 .hero-button:hover {
@@ -546,7 +551,261 @@ h3 {
     translateX(5px);
 }
 
-/* DOODLES */
+/* ==========================================
+   RIGHT FEATURED PRODUCT
+========================================== */
+
+.featured-product-side {
+  position: relative;
+
+  z-index: 6;
+
+  width: 100%;
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  align-items: center;
+}
+
+.featured-floating-card {
+  position: relative;
+
+  width: min(330px, 100%);
+
+  margin-left: auto;
+
+  padding: 14px;
+
+  background:
+    rgba(246,
+      241,
+      231,
+      0.95);
+
+  border:
+    1px solid rgba(70, 83, 63, 0.22);
+
+  border-radius: 24px;
+
+  backdrop-filter: blur(10px);
+
+  -webkit-backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 20px 50px rgba(25, 34, 22, 0.2);
+
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.featured-floating-card:hover {
+  transform: translateY(-7px);
+
+  box-shadow:
+    0 28px 60px rgba(25, 34, 22, 0.26);
+}
+
+.featured-label {
+  display: inline-block;
+
+  margin:
+    4px 5px 12px;
+
+  color: #718266;
+
+  font-family:
+    "Quicksand",
+    sans-serif;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  letter-spacing: 2px;
+
+  text-transform: uppercase;
+}
+
+.featured-product {
+  display: block;
+
+  color: inherit;
+
+  text-decoration: none;
+}
+
+.featured-image {
+  width: 100%;
+
+  height: 275px;
+
+  overflow: hidden;
+
+  border-radius: 18px;
+
+  background: #dfe6d5;
+}
+
+.featured-image img {
+  width: 100%;
+
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  transition:
+    transform 0.45s ease;
+}
+
+.featured-product:hover .featured-image img {
+  transform: scale(1.04);
+}
+
+.featured-no-image {
+  width: 100%;
+
+  height: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: #718266;
+
+  font-family:
+    "Quicksand",
+    sans-serif;
+
+  font-size: 12px;
+
+  background:
+    linear-gradient(145deg,
+      #e7ecdf,
+      #d8e1ce);
+}
+
+.featured-info {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding:
+    16px 5px 7px;
+}
+
+.featured-info h3 {
+  margin: 0 0 5px;
+
+  color: #343a31;
+
+  font-size: 21px;
+
+  font-weight: 500;
+}
+
+.featured-info p {
+  margin: 0;
+
+  color: #718266;
+
+  font-size: 14px;
+
+  font-weight: 700;
+}
+
+.featured-arrow {
+  width: 38px;
+
+  height: 38px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #46533f;
+
+  color: #f6f1e7;
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease;
+}
+
+.featured-product:hover .featured-arrow {
+  transform: translateX(4px);
+
+  background: #718266;
+}
+
+/* dots */
+
+.featured-dots {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-top: 8px;
+
+  padding-bottom: 3px;
+}
+
+.featured-dot {
+  width: 7px;
+
+  height: 7px;
+
+  padding: 0;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background:
+    rgba(70,
+      83,
+      63,
+      0.3);
+
+  cursor: pointer;
+
+  transition:
+    width 0.25s ease,
+    background 0.25s ease,
+    border-radius 0.25s ease;
+}
+
+.featured-dot.active {
+  width: 22px;
+
+  border-radius: 999px;
+
+  background: #46533f;
+}
+
+/* ==========================================
+   DOODLES
+========================================== */
 
 .hero-doodle {
   position: absolute;
@@ -592,6 +851,10 @@ h3 {
 
   animation-delay: -3s;
 }
+
+/* ==========================================
+   SCROLL INDICATOR
+========================================== */
 
 .scroll-indicator {
   position: absolute;
@@ -641,52 +904,90 @@ h3 {
 }
 
 /* ==========================================
-   HOME MINI NAV
+   TABLET
 ========================================== */
 
-.home-mini-nav {
-  display: flex;
+@media (max-width: 1000px) {
+  .home-hero {
+    padding:
+      90px 6%;
+  }
 
-  justify-content:
-    center;
+  .home-hero-inner {
+    grid-template-columns:
+      minmax(0, 1fr) 300px;
 
-  gap: 43px;
+    gap: 40px;
+  }
 
-  padding:
-    22px 5%;
+  .featured-floating-card {
+    width: 290px;
+  }
 
-  overflow-x:
-    auto;
+  .featured-image {
+    height: 235px;
+  }
 
-  background:
-    var(--cream);
-
-  border-bottom:
-    1px solid var(--border);
+  .home-hero h1 {
+    font-size:
+      clamp(52px,
+        6vw,
+        76px);
+  }
 }
 
-.home-mini-nav a {
-  flex: 0 0 auto;
+/* ==========================================
+   MOBILE
+========================================== */
 
-  color: #687362;
+@media (max-width: 760px) {
+  .home-hero {
+    min-height: auto;
 
-  text-decoration: none;
+    padding:
+      120px 7% 80px;
+  }
 
-  font-family:
-    "Quicksand",
-    sans-serif;
+  .home-hero-inner {
+    grid-template-columns: 1fr;
 
-  font-size: 12px;
+    gap: 45px;
+  }
 
-  font-weight: 600;
+  .home-hero-content {
+    max-width: 100%;
 
-  transition:
-    color 0.25s ease;
-}
+    transform: none;
+  }
 
-.home-mini-nav a:hover {
-  color:
-    var(--matcha);
+  .home-hero h1 {
+    font-size:
+      clamp(48px,
+        14vw,
+        68px);
+  }
+
+  .home-hero-content>p {
+    font-size: 15px;
+  }
+
+  .featured-product-side {
+    justify-content: center;
+  }
+
+  .featured-floating-card {
+    width: min(340px, 100%);
+
+    margin: 0 auto;
+  }
+
+  .featured-image {
+    height: 270px;
+  }
+
+  .scroll-indicator {
+    display: none;
+  }
 }
 
 /* ==========================================
