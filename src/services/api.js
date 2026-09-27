@@ -1,6 +1,5 @@
 export async function getProducts() {
-    const response =
-        await fetch("/api/products");
+    const response = await fetch("/api/products");
 
     if (!response.ok) {
         throw new Error(
@@ -8,58 +7,23 @@ export async function getProducts() {
         );
     }
 
-    const result =
-        await response.json();
+    const result = await response.json();
 
     return result.data;
 }
 
-export async function createOrder(
-    order
-) {
-    const response =
-        await fetch("/api/orders", {
-            method: "POST",
-
-            headers: {
-                "Content-Type":
-                    "application/json",
-            },
-
-            body:
-                JSON.stringify(order),
-        });
+export async function getProduct(documentId) {
+    const response = await fetch(
+        `/api/products/${encodeURIComponent(documentId)}`
+    );
 
     if (!response.ok) {
         throw new Error(
-            `Failed to create order: ${response.status}`
+            `Failed to get product: ${response.status}`
         );
     }
 
-    return response.json();
-}
+    const result = await response.json();
 
-export async function createUser(
-    user
-) {
-    const response =
-        await fetch("/api/users", {
-            method: "POST",
-
-            headers: {
-                "Content-Type":
-                    "application/json",
-            },
-
-            body:
-                JSON.stringify(user),
-        });
-
-    if (!response.ok) {
-        throw new Error(
-            `Failed to create user: ${response.status}`
-        );
-    }
-
-    return response.json();
+    return result.data;
 }
