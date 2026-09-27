@@ -37,43 +37,55 @@ export default function CheckoutPage() {
     async function handleSubmit(event) {
         event.preventDefault();
 
-        if (cart.length === 0) return;
-
         try {
-            setSubmitting(true);
-
             const orderData = {
-                customer: form,
-                items: cart.map((item) => ({
+                customer_name: form.fullName,
+                email: form.email,
+                phone: form.phone,
+                shipping_address: form.address,
+                city: form.city,
+                note: form.note,
+
+                items: cartItems.map((item) => ({
                     documentId: item.documentId,
                     name: item.name,
                     quantity: item.quantity,
+                    price: item.price,
                 })),
+
+                total: cartTotal,
+
+                payment_method: form.paymentMethod,
             };
 
-            console.log("Order:", orderData);
-
-            /*
-              Later:
-      
-              const response = await fetch("/api/orders", {
+            const response = await fetch("/api/orders", {
                 method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(orderData),
-              });
-      
-              if (!response.ok) {
-                throw new Error("Failed to create order");
-              }
-            */
 
-            alert("Checkout form is ready. Order API will be connected next.");
+                headers: {
+                    "Content-Type": "application/json",
+                },
+
+                body: JSON.stringify(orderData),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                console.error("Order error:", result);
+
+                alert("Unable to place your order.");
+
+                return;
+            }
+
+            alert("Order placed successfully!");
+
+            clearCart();
+
         } catch (error) {
-            console.error(error);
-        } finally {
-            setSubmitting(false);
+            console.error("Checkout error:", error);
+
+            alert("Something went wrong while placing your order.");
         }
     }
 
