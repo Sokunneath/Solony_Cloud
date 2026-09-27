@@ -149,10 +149,12 @@ export default function CartPage() {
                     </strong>
                 </div>
 
-                <button className="checkout-button">
-                    continue to checkout
-                    →
-                </button>
+                <Link
+                    to="/checkout"
+                    className="checkout-button"
+                >
+                    continue to checkout →
+                </Link>
 
                 <button
                     className="clear-cart"
