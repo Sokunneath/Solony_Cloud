@@ -14,6 +14,12 @@ export default async function handler(
             {
                 headers: {
                     Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+
+                    "CF-Access-Client-Id":
+                        process.env.CF_ACCESS_CLIENT_ID,
+
+                    "CF-Access-Client-Secret":
+                        process.env.CF_ACCESS_CLIENT_SECRET,
                 },
             }
         );

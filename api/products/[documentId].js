@@ -12,13 +12,18 @@ export default async function handler(
 
     try {
         const response = await fetch(
-            `${process.env.STRAPI_URL
-            }/api/products/${encodeURIComponent(
+            `${process.env.STRAPI_URL}/api/products/${encodeURIComponent(
                 documentId
             )}?populate=*`,
             {
                 headers: {
                     Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+
+                    "CF-Access-Client-Id":
+                        process.env.CF_ACCESS_CLIENT_ID,
+
+                    "CF-Access-Client-Secret":
+                        process.env.CF_ACCESS_CLIENT_SECRET,
                 },
             }
         );
