@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import {
     ArrowLeft,
     ShoppingBag,
+    CheckCircle2,
 } from "lucide-react";
 
 import { useCart } from "../context/CartContext";
@@ -15,21 +16,27 @@ export default function CheckoutPage() {
         clearCart,
     } = useCart();
 
-    const [form, setForm] =
-        useState({
-            fullName: "",
-            phone: "",
-            email: "",
-            address: "",
-            city: "",
-            note: "",
-
-            paymentMethod:
-                "cash_on_delivery",
-        });
+    const [form, setForm] = useState({
+        fullName: "",
+        phone: "",
+        email: "",
+        address: "",
+        city: "",
+        note: "",
+        paymentMethod: "cash_on_delivery",
+    });
 
     const [submitting, setSubmitting] =
         useState(false);
+
+    const [orderSuccess, setOrderSuccess] =
+        useState(false);
+
+    const [orderReference, setOrderReference] =
+        useState("");
+
+    const [errorMessage, setErrorMessage] =
+        useState("");
 
     function handleChange(event) {
         const {
@@ -41,13 +48,17 @@ export default function CheckoutPage() {
             ...current,
             [name]: value,
         }));
+
+        if (errorMessage) {
+            setErrorMessage("");
+        }
     }
 
     async function handleSubmit(event) {
         event.preventDefault();
 
         if (cart.length === 0) {
-            alert(
+            setErrorMessage(
                 "Your cart is empty."
             );
 
@@ -55,26 +66,27 @@ export default function CheckoutPage() {
         }
 
         setSubmitting(true);
+        setErrorMessage("");
 
         try {
             const orderData = {
                 customer_name:
-                    form.fullName,
+                    form.fullName.trim(),
 
                 email:
-                    form.email,
+                    form.email.trim(),
 
                 phone:
-                    form.phone,
+                    form.phone.trim(),
 
                 shipping_address:
-                    form.address,
+                    form.address.trim(),
 
                 city:
-                    form.city,
+                    form.city.trim(),
 
                 note:
-                    form.note || "",
+                    form.note.trim(),
 
                 items:
                     cart.map((item) => ({
@@ -131,21 +143,26 @@ export default function CheckoutPage() {
 
             if (!response.ok) {
                 console.error(
-                    "Order error:",
+                    "Order failed:",
                     result
                 );
 
-                alert(
+                setErrorMessage(
                     result.error ||
-                    "Unable to place your order."
+                    "Unable to place your order. Please try again."
                 );
 
                 return;
             }
 
-            alert(
-                "Order placed successfully!"
-            );
+            const reference =
+                result?.data?.documentId ||
+                result?.data?.id ||
+                "";
+
+            setOrderReference(reference);
+
+            setOrderSuccess(true);
 
             clearCart();
 
@@ -155,8 +172,8 @@ export default function CheckoutPage() {
                 error
             );
 
-            alert(
-                `Something went wrong: ${error.message}`
+            setErrorMessage(
+                "Something went wrong while placing your order. Please try again."
             );
 
         } finally {
@@ -164,11 +181,85 @@ export default function CheckoutPage() {
         }
     }
 
+    /* =========================
+       SUCCESS SCREEN
+    ========================== */
+
+    if (orderSuccess) {
+        return (
+            <main className="checkout-success-page">
+
+                <div className="checkout-success-card">
+
+                    <div className="checkout-success-icon">
+                        <CheckCircle2 size={36} />
+                    </div>
+
+                    <span className="checkout-success-label">
+                        ORDER CONFIRMED ♡
+                    </span>
+
+                    <h1>
+                        thank you for your
+                        <em> order.</em>
+                    </h1>
+
+                    <p className="checkout-success-text">
+                        Your Solony order has
+                        been received successfully.
+                        We’ll prepare your little
+                        favorites for delivery.
+                    </p>
+
+                    {orderReference && (
+                        <div className="order-reference">
+                            <span>
+                                Order reference
+                            </span>
+
+                            <strong>
+                                {orderReference}
+                            </strong>
+                        </div>
+                    )}
+
+                    <div className="checkout-success-actions">
+
+                        <Link
+                            to="/shop"
+                            className="final-button"
+                        >
+                            continue shopping
+                        </Link>
+
+                        <Link
+                            to="/"
+                            className="success-home-link"
+                        >
+                            back home
+                        </Link>
+
+                    </div>
+
+                </div>
+
+            </main>
+        );
+    }
+
+    /* =========================
+       EMPTY CART
+    ========================== */
+
     if (cart.length === 0) {
         return (
             <main className="checkout-page">
+
                 <div className="empty-state">
-                    <span>♡</span>
+
+                    <span>
+                        ♡
+                    </span>
 
                     <h1>
                         Your cart is empty
@@ -185,10 +276,16 @@ export default function CheckoutPage() {
                     >
                         shop stationery
                     </Link>
+
                 </div>
+
             </main>
         );
     }
+
+    /* =========================
+       CHECKOUT
+    ========================== */
 
     return (
         <main className="checkout-page">
@@ -203,6 +300,7 @@ export default function CheckoutPage() {
             </Link>
 
             <div className="checkout-heading">
+
                 <span>
                     ALMOST YOURS ♡
                 </span>
@@ -217,12 +315,13 @@ export default function CheckoutPage() {
                     little Solony package
                     should go.
                 </p>
+
             </div>
 
             <div className="checkout-layout">
 
                 {/* =========================
-            CUSTOMER FORM
+            FORM
         ========================== */}
 
                 <form
@@ -230,9 +329,10 @@ export default function CheckoutPage() {
                     onSubmit={handleSubmit}
                 >
 
-                    {/* CONTACT DETAILS */}
+                    {/* CONTACT */}
 
                     <div className="checkout-section-heading">
+
                         <span>
                             01
                         </span>
@@ -248,11 +348,13 @@ export default function CheckoutPage() {
                                 order.
                             </p>
                         </div>
+
                     </div>
 
                     <div className="checkout-fields">
 
                         <div className="form-field full">
+
                             <label htmlFor="fullName">
                                 Full name
                             </label>
@@ -266,9 +368,11 @@ export default function CheckoutPage() {
                                 onChange={handleChange}
                                 required
                             />
+
                         </div>
 
                         <div className="form-field">
+
                             <label htmlFor="phone">
                                 Phone number
                             </label>
@@ -282,9 +386,11 @@ export default function CheckoutPage() {
                                 onChange={handleChange}
                                 required
                             />
+
                         </div>
 
                         <div className="form-field">
+
                             <label htmlFor="email">
                                 Email
                             </label>
@@ -298,15 +404,17 @@ export default function CheckoutPage() {
                                 onChange={handleChange}
                                 required
                             />
+
                         </div>
 
                     </div>
 
                     <div className="checkout-divider" />
 
-                    {/* DELIVERY DETAILS */}
+                    {/* DELIVERY */}
 
                     <div className="checkout-section-heading">
+
                         <span>
                             02
                         </span>
@@ -321,11 +429,13 @@ export default function CheckoutPage() {
                                 send your order?
                             </p>
                         </div>
+
                     </div>
 
                     <div className="checkout-fields">
 
                         <div className="form-field full">
+
                             <label htmlFor="address">
                                 Delivery address
                             </label>
@@ -338,9 +448,11 @@ export default function CheckoutPage() {
                                 onChange={handleChange}
                                 required
                             />
+
                         </div>
 
                         <div className="form-field full">
+
                             <label htmlFor="city">
                                 City / Province
                             </label>
@@ -354,14 +466,15 @@ export default function CheckoutPage() {
                                 onChange={handleChange}
                                 required
                             />
+
                         </div>
 
                         <div className="form-field full">
+
                             <label htmlFor="note">
                                 Delivery note
                                 <small>
-                                    {" "}
-                                    optional
+                                    {" "}optional
                                 </small>
                             </label>
 
@@ -372,6 +485,7 @@ export default function CheckoutPage() {
                                 value={form.note}
                                 onChange={handleChange}
                             />
+
                         </div>
 
                     </div>
@@ -381,6 +495,7 @@ export default function CheckoutPage() {
                     {/* PAYMENT */}
 
                     <div className="checkout-section-heading">
+
                         <span>
                             03
                         </span>
@@ -395,11 +510,12 @@ export default function CheckoutPage() {
                                 would like to pay.
                             </p>
                         </div>
+
                     </div>
 
                     <div className="payment-options">
 
-                        {/* CASH ON DELIVERY */}
+                        {/* CASH */}
 
                         <label
                             className={
@@ -409,6 +525,7 @@ export default function CheckoutPage() {
                                     : "payment-option"
                             }
                         >
+
                             <input
                                 type="radio"
                                 name="paymentMethod"
@@ -421,6 +538,7 @@ export default function CheckoutPage() {
                             />
 
                             <div>
+
                                 <strong>
                                     Cash on delivery
                                 </strong>
@@ -429,10 +547,12 @@ export default function CheckoutPage() {
                                     Pay when your
                                     order arrives.
                                 </span>
+
                             </div>
+
                         </label>
 
-                        {/* BANK TRANSFER */}
+                        {/* BANK */}
 
                         <label
                             className={
@@ -442,6 +562,7 @@ export default function CheckoutPage() {
                                     : "payment-option"
                             }
                         >
+
                             <input
                                 type="radio"
                                 name="paymentMethod"
@@ -454,6 +575,7 @@ export default function CheckoutPage() {
                             />
 
                             <div>
+
                                 <strong>
                                     Bank transfer
                                 </strong>
@@ -462,24 +584,37 @@ export default function CheckoutPage() {
                                     Payment
                                     instructions can
                                     be provided after
-                                    order
-                                    confirmation.
+                                    order confirmation.
                                 </span>
+
                             </div>
+
                         </label>
 
                     </div>
+
+                    {/* ERROR */}
+
+                    {errorMessage && (
+                        <div className="checkout-error">
+                            {errorMessage}
+                        </div>
+                    )}
+
+                    {/* SUBMIT */}
 
                     <button
                         type="submit"
                         className="place-order-button"
                         disabled={submitting}
                     >
+
                         <ShoppingBag size={17} />
 
                         {submitting
                             ? "placing order..."
                             : "place order"}
+
                     </button>
 
                 </form>
@@ -501,6 +636,7 @@ export default function CheckoutPage() {
                     <div className="checkout-products">
 
                         {cart.map((item) => {
+
                             const image =
                                 item.image?.[0]
                                     ?.formats?.small
@@ -531,6 +667,7 @@ export default function CheckoutPage() {
                                     </div>
 
                                     <div>
+
                                         <strong>
                                             {item.name}
                                         </strong>
@@ -544,6 +681,7 @@ export default function CheckoutPage() {
                                                 item.quantity
                                             ).toFixed(2)}
                                         </p>
+
                                     </div>
 
                                 </div>
